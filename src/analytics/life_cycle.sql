@@ -3,15 +3,15 @@ WITH tb_daily AS (
     IdCliente,
     substr(DtCriacao,1, 10) AS DtDia
     FROM transacoes
-    WHERE DtCriacao < '2026-02-28'
+    WHERE DtCriacao < '{date}'
 ),
 
 tb_idade AS (
 SELECT IdCliente,
     --MIN(DtDia) AS DtPrimeiraEntrada,
-    cast(MAX(julianday('now') - julianday(Dtdia)) AS int) AS DiasDesdePrimeiraEntrada,
+    cast(MAX(julianday('{date}') - julianday(Dtdia)) AS int) AS DiasDesdePrimeiraEntrada,
     --MAX(DtDia) AS DtUltimaEntrada,
-    cast(MIN(julianday('now') - julianday(Dtdia)) AS int) AS DiasDesdeUltimaEntrada
+    cast(MIN(julianday('{date}') - julianday(Dtdia)) AS int) AS DiasDesdeUltimaEntrada
 FROM tb_daily
 GROUP BY IdCliente
 ),
@@ -24,7 +24,7 @@ tb_rn AS (
 
 tb_penultimaAtivacao AS (
     SELECT *,
-    CAST(julianday('now') - julianday(Dtdia) AS INT) AS DiasDesdePenultimaEntrada
+    CAST(julianday('{date}') - julianday(Dtdia) AS INT) AS DiasDesdePenultimaEntrada
     FROM tb_rn
     WHERE rnDia = 2
 ),
@@ -46,5 +46,5 @@ LEFT JOIN tb_penultimaAtivacao AS t2
 ON t1.IdCliente = t2.IdCliente
 )
 
-SELECT date('2026-02-28', '-1 day') AS DtRef, *
-FROM tblife_cicle
+SELECT date('{date}', '-1 day') AS DtRef, *
+FROM tblife_cicle;
