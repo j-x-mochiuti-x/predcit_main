@@ -44,7 +44,38 @@ SELECT t1.*,
  FROM tb_idade AS t1
 LEFT JOIN tb_penultimaAtivacao AS t2
 ON t1.IdCliente = t2.IdCliente
+),
+
+tb_freq_valor AS (
+        SELECT idCliente,
+                count(DISTINCT substr(DtCriacao,0,11)) AS qtdeFrequencia,
+                sum(CASE WHEN QtdePontos > 0 THEN QtdePontos ELSE 0 END) AS qtdePontosPos
+                -- sum(abs(qtdePontos)) AS qtdePontosAbs
+        FROM transacoes
+        WHERE DtCriacao < '{date}'
+        AND DtCriacao >= date('{date}','-28 day')
+        GROUP BY idCliente
+        ORDER BY qtdeFrequencia
+),
+
+tb_cluster AS (
+        SELECT *,
+        CASE
+                WHEN qtdeFrequencia <= 10 AND qtdePontosPos >= 1500 THEN '12-HYPER'
+                WHEN qtdeFrequencia > 10 AND qtdePontosPos >= 1500 THEN '22-EFICIENTES'
+                WHEN qtdeFrequencia <= 10 AND qtdePontosPos >= 750 THEN '11-INDECISO'
+                WHEN qtdeFrequencia > 10 AND qtdePontosPos >= 1500 THEN '21-ESFORÇADO'
+                WHEN qtdeFrequencia < 5 THEN '00-LURKER'
+                WHEN qtdeFrequencia <= 10 THEN '01-PREGUIÇOSO'
+                WHEN qtdeFrequencia > 10 THEN '20-POTENCIAL'
+        END AS cluster
+FROM tb_freq_valor
 )
 
-SELECT date('{date}', '-1 day') AS DtRef, *
-FROM tblife_cicle;
+SELECT t1.*,
+        t2.qtdeFrequencia,
+        t2.qtdePontosPos,
+        t2.cluster
+FROM tblife_cicle AS t1
+LEFT JOIN tb_cluster AS t2
+ON t1.IdCliente = t2.IdCliente
