@@ -14,7 +14,41 @@ print(query)
 engine_app = sa.create_engine("sqlite:///../../data/loyalty-system/database.db")
 engine_analitycal = sa.create_engine("sqlite:///../../data/analytics/database.db")
 # %%
-df = pd.read_sql(query, engine_app)
+dates = [
+    '2024-03-01',
+    '2024-04-01',
+    '2024-05-01',
+    '2024-06-01',
+    '2024-07-01',
+    '2024-08-01',
+    '2024-09-01',
+    '2024-10-01',
+    '2024-11-01',
+    '2024-12-01',
+    '2025-01-01',
+    '2025-02-01',
+    '2025-03-01',
+    '2025-04-01',
+    '2025-05-01',
+    '2025-06-01',
+    '2025-07-01',
+    '2025-08-01',
+    '2025-09-01'
+]
 
-df.to_sql('life_cycle.sql', engine_analitycal, index=False, if_exists='append')
+for i in dates:
+
+    with engine_analitycal.connect() as con:
+        try:
+            query_delete = f"DELETE FROM life_cycle WHERE dtRef = date('{i}', '-1 day')"
+            print(query_delete)
+            con.execute(sa.text(query_delete))
+            con.commit
+        except Exception as e:
+            print(e)
+    
+    print(i)
+    query_format = query.format(date=i)
+    df = pd.read_sql(query_format, engine_app)
+    df.to_sql("life_cycle", engine_analitycal, index=False, if_exists="append")
 # %%

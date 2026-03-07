@@ -72,7 +72,9 @@ tb_cluster AS (
 FROM tb_freq_valor
 )
 
-SELECT t1.*,
+SELECT 
+        date('{date}', '-1 day') AS DtRef,
+        t1.*,
         t2.qtdeFrequencia,
         t2.qtdePontosPos,
         t2.cluster
