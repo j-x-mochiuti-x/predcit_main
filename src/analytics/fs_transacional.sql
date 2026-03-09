@@ -1,6 +1,7 @@
 WITH tb_transacoes AS (
     SELECT *,
-        substr(DtCriacao,0,11) AS dtDia
+        substr(DtCriacao,0,11) AS dtDia,
+        CAST(substr(DtCriacao, 12,2) AS int) AS dtHora
     FROM transacoes
     WHERE DtCriacao < '2026-02-26'
 ),
@@ -35,7 +36,16 @@ tb_agg_transacoes AS (
         sum(CASE WHEN dtDia >= date('2026-02-26', '-7 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega7,
         sum(CASE WHEN dtDia >= date('2026-02-26', '-14 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega14,
         sum(CASE WHEN dtDia >= date('2026-02-26', '-28 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega28,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-56 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega56
+        sum(CASE WHEN dtDia >= date('2026-02-26', '-56 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega56,
+
+        COUNT(CASE WHEN dtHora BETWEEN 10 AND 14 THEN IdTransacao END) AS qtdetransacaoManha,
+        COUNT(CASE WHEN dtHora BETWEEN 15 AND 21 THEN IdTransacao END) AS qtdetransacaoTarde,
+        COUNT(CASE WHEN dtHora > 21 AND dtHora < 10 THEN IdTransacao END) AS qtdetransacaoNoite,
+
+        1. * COUNT(CASE WHEN dtHora BETWEEN 10 AND 14 THEN IdTransacao END) / count(IdTransacao) AS pctdetransacaoManha,
+        1. * COUNT(CASE WHEN dtHora BETWEEN 15 AND 21 THEN IdTransacao END) / count(IdTransacao) AS pctdetransacaoTarde,
+        1. * COUNT(CASE WHEN dtHora > 21 AND dtHora < 10 THEN IdTransacao END) / count(IdTransacao) AS pctdetransacaoNoite
+
     FROM tb_transacoes
     GROUP BY IdCliente
 ),
@@ -78,7 +88,7 @@ tb_lag_dia AS (
             dtDia,
             LAG(dtDia) OVER (PARTITION BY idCliente ORDER BY dtDia) AS lagDia
     FROM tb_horas_dia
-)
+),
 
 tb_intervalo_dias AS (
     SELECT IdCliente,
@@ -86,4 +96,25 @@ tb_intervalo_dias AS (
             avg(CASE WHEN dtDia >= date('2026-02-26', '-28 day') THEN julianday(dtDia) - julianday(lagDia) END) AS avgIntervaloD28
     FROM tb_lag_dia
     GROUP BY idCliente
+),
+
+tb_join AS (
+    SELECT t1.*,
+            t2.qtdeHorasVida,
+            t2.qtdeHorasD7,
+            t2.qtdeHorasD14,
+            t2.qtdeHorasD28,
+            t2.qtdeHorasD56,
+            t3.avgIntervaloDiasVida,
+            t3.avgIntervaloD28
+    FROM tb_agg_cal AS t1
+
+    LEFT JOIN tb_hora_cliente AS t2
+    ON t1.IdCliente = t2.idCliente
+
+    LEFT JOIN tb_intervalo_dias AS t3
+    ON t1.idCliente = t3.idCliente
 )
+
+SELECT *
+FROM tb_agg_transacoes
