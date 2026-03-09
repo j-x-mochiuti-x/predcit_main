@@ -38,14 +38,25 @@ tb_agg_transacoes AS (
         sum(CASE WHEN dtDia >= date('2026-02-26', '-56 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega56
     FROM tb_transacoes
     GROUP BY IdCliente
+),
+
+tb_agg_cal AS (
+    SELECT *,
+        COALESCE(1. * qtdeTransacaoVida / qtdeAtivacaoVida,0) AS qtdeTransacaoDiaVida,
+        COALESCE(1. * qtdeTransacao7 / qtdeAtivacao7,0) AS qtdeTransacaoDiaDia7,
+        COALESCE(1. * qtdeTransacao14 / qtdeAtivacao14,0) AS qtdeTransacaoDiaDia14,
+        COALESCE(1. * qtdeTransacao28 / qtdeAtivacao28,0) AS qtdeTransacaoDiaDia28,
+        COALESCE(1. * qtdeTransacao56 / qtdeAtivacao56,0) AS qtdeTransacaoDiaDia56,
+        coalesce(1. * qtdeTransacao28 / 28, 0) AS pctAtivacaoMAU
+
+    FROM tb_agg_transacoes
+),
+
+tb_horas_dia AS (
+    SELECT IdCliente,
+    dtDia,
+    24 * (max(julianday(DtCriacao)) - min(julianday(DtCriacao))) AS duracao
+
+    FROM tb_transacoes
+    GROUP BY IdCliente, dtDia
 )
-
-SELECT *,
-    COALESCE(1. * qtdeTransacaoVida / qtdeAtivacaoVida,0) AS qtdeTransacaoDiaVida,
-    COALESCE(1. * qtdeTransacao7 / qtdeAtivacao7,0) AS qtdeTransacaoDiaDia7,
-    COALESCE(1. * qtdeTransacao14 / qtdeAtivacao14,0) AS qtdeTransacaoDiaDia14,
-    COALESCE(1. * qtdeTransacao28 / qtdeAtivacao28,0) AS qtdeTransacaoDiaDia28,
-    COALESCE(1. * qtdeTransacao56 / qtdeAtivacao56,0) AS qtdeTransacaoDiaDia56,
-    coalesce(1. * qtdeTransacao28 / 28, 0) AS pctAtivacaoMAU
-
-FROM tb_agg_transacoes
