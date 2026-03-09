@@ -70,4 +70,20 @@ tb_hora_cliente AS (
             SUM(CASE WHEN dtDia >= date('2026-02-26', '-56 day') THEN duracao ELSE 0 END) AS qtdeHorasD56
     FROM tb_horas_dia
     GROUP BY IdCliente
+),
+
+tb_lag_dia AS (
+
+    SELECT idCliente,
+            dtDia,
+            LAG(dtDia) OVER (PARTITION BY idCliente ORDER BY dtDia) AS lagDia
+    FROM tb_horas_dia
+)
+
+tb_intervalo_dias AS (
+    SELECT IdCliente,
+            avg(julianday(dtDia) - julianDay(lagDia)) AS avgIntervaloDiasVida,
+            avg(CASE WHEN dtDia >= date('2026-02-26', '-28 day') THEN julianday(dtDia) - julianday(lagDia) END) AS avgIntervaloD28
+    FROM tb_lag_dia
+    GROUP BY idCliente
 )
