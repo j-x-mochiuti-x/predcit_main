@@ -59,4 +59,15 @@ tb_horas_dia AS (
 
     FROM tb_transacoes
     GROUP BY IdCliente, dtDia
+),
+
+tb_hora_cliente AS (
+    SELECT IdCliente,
+            SUM(duracao) AS qtdeHorasVida,
+            SUM(CASE WHEN dtDia >= date('2026-02-26', '-7 day') THEN duracao ELSE 0 END) AS qtdeHorasD7,
+            SUM(CASE WHEN dtDia >= date('2026-02-26', '-14 day') THEN duracao ELSE 0 END) AS qtdeHorasD14,
+            SUM(CASE WHEN dtDia >= date('2026-02-26', '-28 day') THEN duracao ELSE 0 END) AS qtdeHorasD28,
+            SUM(CASE WHEN dtDia >= date('2026-02-26', '-56 day') THEN duracao ELSE 0 END) AS qtdeHorasD56
+    FROM tb_horas_dia
+    GROUP BY IdCliente
 )
