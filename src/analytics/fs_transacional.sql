@@ -45,6 +45,7 @@ SELECT *,
     COALESCE(1. * qtdeTransacao7 / qtdeAtivacao7,0) AS qtdeTransacaoDiaDia7,
     COALESCE(1. * qtdeTransacao14 / qtdeAtivacao14,0) AS qtdeTransacaoDiaDia14,
     COALESCE(1. * qtdeTransacao28 / qtdeAtivacao28,0) AS qtdeTransacaoDiaDia28,
-    COALESCE(1. * qtdeTransacao56 / qtdeAtivacao56,0) AS qtdeTransacaoDiaDia56
+    COALESCE(1. * qtdeTransacao56 / qtdeAtivacao56,0) AS qtdeTransacaoDiaDia56,
+    coalesce(1. * qtdeTransacao28 / 28, 0) AS pctAtivacaoMAU
 
 FROM tb_agg_transacoes
