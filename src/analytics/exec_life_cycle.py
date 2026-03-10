@@ -17,7 +17,6 @@ engine_app = sa.create_engine("sqlite:///../../data/loyalty-system/database.db")
 engine_analitycal = sa.create_engine("sqlite:///../../data/analytics/database.db")
 # %%
 
-
 def date_range(start, stop):
     dates =[]
     while start <= stop:
