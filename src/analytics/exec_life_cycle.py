@@ -1,6 +1,8 @@
 # %%
 import pandas as pd
 import sqlalchemy as sa
+import datetime
+from tqdm import tqdm
 
 #%%
 def import_query(path):
@@ -14,29 +16,19 @@ print(query)
 engine_app = sa.create_engine("sqlite:///../../data/loyalty-system/database.db")
 engine_analitycal = sa.create_engine("sqlite:///../../data/analytics/database.db")
 # %%
-dates = [
-    '2024-03-01',
-    '2024-04-01',
-    '2024-05-01',
-    '2024-06-01',
-    '2024-07-01',
-    '2024-08-01',
-    '2024-09-01',
-    '2024-10-01',
-    '2024-11-01',
-    '2024-12-01',
-    '2025-01-01',
-    '2025-02-01',
-    '2025-03-01',
-    '2025-04-01',
-    '2025-05-01',
-    '2025-06-01',
-    '2025-07-01',
-    '2025-08-01',
-    '2025-09-01'
-]
 
-for i in dates:
+
+def date_range(start, stop):
+    dates =[]
+    while start <= stop:
+        dates.append(start)
+        dt_start = datetime.datetime.strptime(start, '%Y-%m-%d') + datetime.timedelta(days=1)
+        start = datetime.datetime.strftime(dt_start, '%Y-%m-%d')
+    return dates
+
+dates = date_range('2024-03-01', '2025-09-01')
+
+for i in tqdm(dates):
 
     with engine_analitycal.connect() as con:
         try:
