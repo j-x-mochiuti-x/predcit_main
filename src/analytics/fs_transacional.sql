@@ -114,7 +114,29 @@ tb_join AS (
 
     LEFT JOIN tb_intervalo_dias AS t3
     ON t1.idCliente = t3.idCliente
-)
+),
 
-SELECT *
-FROM tb_agg_transacoes
+tb_share_produtos AS (
+    SELECT idCliente,
+            1. * count(CASE WHEN DescNomeProduto = 'ChatMessage' THEN t1.IdTransacao END) / count(t1.IdTransacao) AS qtdeChatMessage,
+            1. * count(CASE WHEN DescNomeProduto = 'Airflow Lover' THEN t1.IdTransacao END) / count(t1.IdTransacao) AS qtdeAirflowLover,
+            1. * count(CASE WHEN DescNomeProduto = 'Resgatar Ponei' THEN t1.IdTransacao END) / count(t1.IdTransacao) AS qtdeResgatarPonei,
+            1. * count(CASE WHEN DescNomeProduto = 'R Lover' THEN t1.IdTransacao END) / count(t1.IdTransacao) AS qtdeRLover,
+            1. * count(CASE WHEN DescNomeProduto = 'Lista de presença' THEN t1.IdTransacao END) / count(t1.IdTransacao) AS qtdeListadePresenca,
+            1. * count(CASE WHEN DescNomeProduto = 'Presença Streak' THEN t1.IdTransacao END) / count(t1.IdTransacao) AS qtdePresençaStreak,
+            1. * count(CASE WHEN DescNomeProduto = 'Troca de Pontos StreamElements' THEN t1.IdTransacao END) / count(t1.IdTransacao) AS qtdeTrocadePontosStreamElements,
+            1. * count(CASE WHEN DescNomeProduto = 'Reembolso: Troca de Pontos StreamElements' THEN t1.IdTransacao END) / count(t1.IdTransacao) AS qtdeReembolsoStreamElements,
+            1. * count(CASE WHEN DescCategoriaProduto ='rpg'THEN t1.IdTransacao END) / count(t1.IdTransacao) AS qtdeRPG,
+            1. * count(CASE WHEN DescCategoriaProduto ='churn_model' THEN t1.IdTransacao END) / count(t1.IdTransacao) AS qtdeChurn_Model,
+            t3.DescNomeProduto,
+            t3.DescCategoriaProduto
+    FROM tb_transacoes AS t1
+
+    LEFT JOIN transacao_produto AS t2
+    ON t1.IdTransacao = t2.IdTransacao
+
+    LEFT JOIN produtos AS t3
+    ON t2.IdProduto = t3.IdProduto
+
+    GROUP BY idCliente
+)
