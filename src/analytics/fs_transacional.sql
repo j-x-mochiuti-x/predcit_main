@@ -8,6 +8,9 @@ WITH tb_transacoes AS (
 
 tb_agg_transacoes AS (
     SELECT IdCliente,
+
+        max(julianday(date('2026-02-26', '-1 day')) - julianday(DtCriacao)) AS idadeDias,
+
         count(DISTINCT dtDia) AS qtdeAtivacaoVida,
         count(DISTINCT CASE WHEN dtDia >= date('2026-02-26', '-7 day') THEN dtDia END) AS qtdeAtivacao7,
         count(DISTINCT CASE WHEN dtDia >= date('2026-02-26', '-14 day') THEN dtDia END) AS qtdeAtivacao14,
@@ -99,6 +102,7 @@ tb_intervalo_dias AS (
 ),
 
 tb_join AS (
+    
     SELECT t1.*,
             t2.qtdeHorasVida,
             t2.qtdeHorasD7,
@@ -106,7 +110,18 @@ tb_join AS (
             t2.qtdeHorasD28,
             t2.qtdeHorasD56,
             t3.avgIntervaloDiasVida,
-            t3.avgIntervaloD28
+            t3.avgIntervaloD28,
+            t4.qtdeChatMessage,
+            t4.qtdeAirflowLover,
+            t4.qtdeResgatarPonei,
+            t4.qtdeRLover,
+            t4.qtdeListadePresenca,
+            t4.qtdePresençaStreak,
+            t4.qtdeTrocadePontosStreamElements,
+            t4.qtdeReembolsoStreamElements,
+            t4.qtdeRPG,
+            t4.qtdeChurn_Model
+
     FROM tb_agg_cal AS t1
 
     LEFT JOIN tb_hora_cliente AS t2
@@ -114,6 +129,9 @@ tb_join AS (
 
     LEFT JOIN tb_intervalo_dias AS t3
     ON t1.idCliente = t3.idCliente
+
+    LEFT JOIN tb_share_produtos AS t4
+    ON t1.idCliente = t4.idCliente
 ),
 
 tb_share_produtos AS (
@@ -140,3 +158,5 @@ tb_share_produtos AS (
 
     GROUP BY idCliente
 )
+
+SELECT * FROM tb_join
