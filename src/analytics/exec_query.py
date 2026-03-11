@@ -5,7 +5,6 @@ import datetime
 from tqdm import tqdm
 import argparse
 
-#%%
 def import_query(path):
     with open(path) as open_file:
         query = open_file.read()
@@ -22,9 +21,9 @@ def date_range(start, stop, monthly=False):
         return [i for i in dates if i.endswith('01')]
     return dates
 
-def execute_query(table, database_origin, database_target, dt_start, dt_stop, monthly, mode='append'):
-    engine_app = sa.create_engine(f"sqlite:///../../data/{database_origin}/database.db")
-    engine_analitycal = sa.create_engine(f"sqlite:///../../data/{database_target}/database.db")
+def execute_query(table, db_origin, db_target, dt_start, dt_stop, monthly, mode='append'):
+    engine_app = sa.create_engine(f"sqlite:///../../data/{db_origin}/database.db")
+    engine_analitycal = sa.create_engine(f"sqlite:///../../data/{db_target}/database.db")
 
     query = import_query(f"{table}.sql")
 
@@ -52,21 +51,15 @@ def main():
     parser.add_argument('--db_target', choices=['analytics'], default='analytics')
     parser.add_argument('--table', type=str, help='Tabela que será processada com o mesmo nome do arquivo.')
 
-    now = datetime.datetime.now().strftime("Y%-%m-%d")
+    now = datetime.datetime.now().strftime("%Y-%m-%d")
     parser.add_argument("--start", type=str, default=now)
     parser.add_argument("--stop", type=str, default=now)
     parser.add_argument("--monthly", action='store_true')
     parser.add_argument("--mode", choices=['append', 'replace'])
-    args = parser.parser_args()
+    args = parser.parse_args()
 
-    execute_query(args.table, args.datebase_origin, args.database_target, args.dt_start, args.dt_stop, args.monthly)
-
+    
 if __name__ == "__main__":
     main()
 
 # %%
-database_origin = 'loyalty-system'
-database_target = 'analytics'
-table = 'life_cycle'
-dt_start = '2024-03-01'
-dt_stop = '2025-09-01'
