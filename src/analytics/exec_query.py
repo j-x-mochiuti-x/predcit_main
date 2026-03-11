@@ -3,6 +3,7 @@ import pandas as pd
 import sqlalchemy as sa
 import datetime
 from tqdm import tqdm
+import argparse
 
 #%%
 def import_query(path):
@@ -10,15 +11,18 @@ def import_query(path):
         query = open_file.read()
     return query
 
-def date_range(start, stop):
+def date_range(start, stop, monthly=False):
     dates =[]
     while start <= stop:
         dates.append(start)
         dt_start = datetime.datetime.strptime(start, '%Y-%m-%d') + datetime.timedelta(days=1)
         start = datetime.datetime.strftime(dt_start, '%Y-%m-%d')
+    
+    if monthly:
+        return [i for i in dates if i.endswith('01')]
     return dates
 
-def execute_query(table, database_origin, database_target, dt_start, dt_stop):
+def execute_query(table, database_origin, database_target, dt_start, dt_stop, monthly, mode='append'):
     engine_app = sa.create_engine(f"sqlite:///../../data/{database_origin}/database.db")
     engine_analitycal = sa.create_engine(f"sqlite:///../../data/{database_target}/database.db")
 
@@ -41,6 +45,24 @@ def execute_query(table, database_origin, database_target, dt_start, dt_stop):
         query_format = query.format(date=i)
         df = pd.read_sql(query_format, engine_app)
         df.to_sql(table, engine_analitycal, index=False, if_exists="append")
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--db_origin', choices=['loyalty-system', 'education-platform', 'analytics'], default='loyalty-system')
+    parser.add_argument('--db_target', choices=['analytics'], default='analytics')
+    parser.add_argument('--table', type=str, help='Tabela que será processada com o mesmo nome do arquivo.')
+
+    now = datetime.datetime.now().strftime("Y%-%m-%d")
+    parser.add_argument("--start", type=str, default=now)
+    parser.add_argument("--stop", type=str, default=now)
+    parser.add_argument("--monthly", action='store_true')
+    parser.add_argument("--mode", choices=['append', 'replace'])
+    args = parser.parser_args()
+
+    execute_query(args.table, args.datebase_origin, args.database_target, args.dt_start, args.dt_stop, args.monthly)
+
+if __name__ == "__main__":
+    main()
 
 # %%
 database_origin = 'loyalty-system'
