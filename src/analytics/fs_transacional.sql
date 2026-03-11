@@ -3,43 +3,43 @@ WITH tb_transacoes AS (
         substr(DtCriacao,0,11) AS dtDia,
         CAST(substr(DtCriacao, 12,2) AS int) AS dtHora
     FROM transacoes
-    WHERE DtCriacao < '2026-02-26'
+    WHERE DtCriacao < '{date}'
 ),
 
 tb_agg_transacoes AS (
     SELECT IdCliente,
 
-        max(julianday(date('2026-02-26', '-1 day')) - julianday(DtCriacao)) AS idadeDias,
+        max(julianday(date('{date}', '-1 day')) - julianday(DtCriacao)) AS idadeDias,
 
         count(DISTINCT dtDia) AS qtdeAtivacaoVida,
-        count(DISTINCT CASE WHEN dtDia >= date('2026-02-26', '-7 day') THEN dtDia END) AS qtdeAtivacao7,
-        count(DISTINCT CASE WHEN dtDia >= date('2026-02-26', '-14 day') THEN dtDia END) AS qtdeAtivacao14,
-        count(DISTINCT CASE WHEN dtDia >= date('2026-02-26', '-28 day') THEN dtDia END) AS qtdeAtivacao28,
-        count(DISTINCT CASE WHEN dtDia >= date('2026-02-26', '-56 day') THEN dtDia END) AS qtdeAtivacao56,
+        count(DISTINCT CASE WHEN dtDia >= date('{date}', '-7 day') THEN dtDia END) AS qtdeAtivacao7,
+        count(DISTINCT CASE WHEN dtDia >= date('{date}', '-14 day') THEN dtDia END) AS qtdeAtivacao14,
+        count(DISTINCT CASE WHEN dtDia >= date('{date}', '-28 day') THEN dtDia END) AS qtdeAtivacao28,
+        count(DISTINCT CASE WHEN dtDia >= date('{date}', '-56 day') THEN dtDia END) AS qtdeAtivacao56,
 
         count(DISTINCT IdTransacao) AS qtdeTransacaoVida,
-        count(DISTINCT CASE WHEN dtDia >= date('2026-02-26', '-7 day') THEN IdTransacao END) AS qtdeTransacao7,
-        count(DISTINCT CASE WHEN dtDia >= date('2026-02-26', '-14 day') THEN IdTransacao END) AS qtdeTransacao14,
-        count(DISTINCT CASE WHEN dtDia >= date('2026-02-26', '-28 day') THEN IdTransacao END) AS qtdeTransacao28,
-        count(DISTINCT CASE WHEN dtDia >= date('2026-02-26', '-56 day') THEN IdTransacao END) AS qtdeTransacao56,
+        count(DISTINCT CASE WHEN dtDia >= date('{date}', '-7 day') THEN IdTransacao END) AS qtdeTransacao7,
+        count(DISTINCT CASE WHEN dtDia >= date('{date}', '-14 day') THEN IdTransacao END) AS qtdeTransacao14,
+        count(DISTINCT CASE WHEN dtDia >= date('{date}', '-28 day') THEN IdTransacao END) AS qtdeTransacao28,
+        count(DISTINCT CASE WHEN dtDia >= date('{date}', '-56 day') THEN IdTransacao END) AS qtdeTransacao56,
         
         sum(qtdePontos) AS saldoVida,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-7 day') THEN qtdePontos ELSE 0 END) AS saldos7,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-14 day') THEN qtdePontos ELSE 0 END) AS saldos14,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-28 day') THEN qtdePontos ELSE 0 END) AS saldos28,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-56 day') THEN qtdePontos ELSE 0 END) AS saldos56,
+        sum(CASE WHEN dtDia >= date('{date}', '-7 day') THEN qtdePontos ELSE 0 END) AS saldos7,
+        sum(CASE WHEN dtDia >= date('{date}', '-14 day') THEN qtdePontos ELSE 0 END) AS saldos14,
+        sum(CASE WHEN dtDia >= date('{date}', '-28 day') THEN qtdePontos ELSE 0 END) AS saldos28,
+        sum(CASE WHEN dtDia >= date('{date}', '-56 day') THEN qtdePontos ELSE 0 END) AS saldos56,
 
         sum(CASE WHEN qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPosVida,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-7 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPos7,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-14 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPos14,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-28 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPos28,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-56 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPos56,
+        sum(CASE WHEN dtDia >= date('{date}', '-7 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPos7,
+        sum(CASE WHEN dtDia >= date('{date}', '-14 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPos14,
+        sum(CASE WHEN dtDia >= date('{date}', '-28 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPos28,
+        sum(CASE WHEN dtDia >= date('{date}', '-56 day') AND qtdePontos > 0 THEN qtdePontos ELSE 0 END) AS qtdePontosPos56,
 
         sum(CASE WHEN qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNegaVida,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-7 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega7,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-14 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega14,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-28 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega28,
-        sum(CASE WHEN dtDia >= date('2026-02-26', '-56 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega56,
+        sum(CASE WHEN dtDia >= date('{date}', '-7 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega7,
+        sum(CASE WHEN dtDia >= date('{date}', '-14 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega14,
+        sum(CASE WHEN dtDia >= date('{date}', '-28 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega28,
+        sum(CASE WHEN dtDia >= date('{date}', '-56 day') AND qtdePontos < 0 THEN qtdePontos ELSE 0 END) AS qtdePontosNega56,
 
         COUNT(CASE WHEN dtHora BETWEEN 10 AND 14 THEN IdTransacao END) AS qtdetransacaoManha,
         COUNT(CASE WHEN dtHora BETWEEN 15 AND 21 THEN IdTransacao END) AS qtdetransacaoTarde,
@@ -77,10 +77,10 @@ tb_horas_dia AS (
 tb_hora_cliente AS (
     SELECT IdCliente,
             SUM(duracao) AS qtdeHorasVida,
-            SUM(CASE WHEN dtDia >= date('2026-02-26', '-7 day') THEN duracao ELSE 0 END) AS qtdeHorasD7,
-            SUM(CASE WHEN dtDia >= date('2026-02-26', '-14 day') THEN duracao ELSE 0 END) AS qtdeHorasD14,
-            SUM(CASE WHEN dtDia >= date('2026-02-26', '-28 day') THEN duracao ELSE 0 END) AS qtdeHorasD28,
-            SUM(CASE WHEN dtDia >= date('2026-02-26', '-56 day') THEN duracao ELSE 0 END) AS qtdeHorasD56
+            SUM(CASE WHEN dtDia >= date('{date}', '-7 day') THEN duracao ELSE 0 END) AS qtdeHorasD7,
+            SUM(CASE WHEN dtDia >= date('{date}', '-14 day') THEN duracao ELSE 0 END) AS qtdeHorasD14,
+            SUM(CASE WHEN dtDia >= date('{date}', '-28 day') THEN duracao ELSE 0 END) AS qtdeHorasD28,
+            SUM(CASE WHEN dtDia >= date('{date}', '-56 day') THEN duracao ELSE 0 END) AS qtdeHorasD56
     FROM tb_horas_dia
     GROUP BY IdCliente
 ),
@@ -96,7 +96,7 @@ tb_lag_dia AS (
 tb_intervalo_dias AS (
     SELECT IdCliente,
             avg(julianday(dtDia) - julianDay(lagDia)) AS avgIntervaloDiasVida,
-            avg(CASE WHEN dtDia >= date('2026-02-26', '-28 day') THEN julianday(dtDia) - julianday(lagDia) END) AS avgIntervaloD28
+            avg(CASE WHEN dtDia >= date('{date}', '-28 day') THEN julianday(dtDia) - julianday(lagDia) END) AS avgIntervaloD28
     FROM tb_lag_dia
     GROUP BY idCliente
 ),

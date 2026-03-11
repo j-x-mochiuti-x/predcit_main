@@ -2,14 +2,14 @@ WITH tb_life_cycle_atual AS (
     SELECT IdCliente, life_cicle
     FROM life_cycle
 
-    WHERE DtRef = date('2024-03-01', '-1 day')
+    WHERE DtRef = date('{date}', '-1 day')
 ),
 
 tb_life_cycle_D28 AS (
     SELECT IdCliente,
             life_cicle
     FROM life_cycle
-    WHERE dtRef = date('2024-03-01', '-29 day')
+    WHERE dtRef = date('{date}', '-29 day')
 ),
 
 tb_share_ciclos AS (
@@ -69,7 +69,7 @@ tb_join AS (
 )
 
 
-SELECT date('2024-03-01', '-1 day') AS dtRef,
+SELECT date('{date}', '-1 day') AS dtRef,
        *
 
 FROM tb_join
