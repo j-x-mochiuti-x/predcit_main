@@ -2,71 +2,76 @@ DROP TABLE IF EXISTS abt_fiel;
 CREATE TABLE IF NOT EXISTS abt_fiel AS
 
 WITH tb_join AS (
-    SELECT t1.DtRef,
+
+    SELECT t1.dtRef,
            t1.IdCliente,
-           t1.life_cicle,
-           t2.life_cicle,
-           CASE WHEN t2.life_cicle = '02 FIEL' THEN 1 ELSE 0 END AS flFiel,
-           ROW_NUMBER() OVER (PARTITION BY t1.IdCliente ORDER BY random()) AS randomCol
+           t1.descLifeCycle,
+           t2.descLifeCycle,
+           CASE WHEN t2.descLifeCycle = '02-FIEL' THEN 1 ELSE 0 END AS flFiel,
+           ROW_NUMBER() OVER (PARTITION BY t1.IdCliente ORDER BY random()) as RandomCol
 
     FROM life_cycle AS t1
-    LEFT JOIN tblife_cicle AS t2
-    ON t1.IdCliente = t2.IdCliente
-    AND date(t1.DtRef, '+28 day') = date(t2.DtRef)
 
-    WHERE ((t1.DtRef >= '2024-03-01' AND t1.dtRef <= '2025-08-01')
+    LEFT JOIN life_cycle AS t2
+    ON t1.IdCliente = t2.IdCliente
+    AND date(t1.dtRef, '+28 day') = date(t2.dtRef)
+
+    WHERE ((t1.dtRef >= '2024-03-01' AND t1.dtRef <= '2025-08-01')
             OR t1.dtRef='2025-09-01')
     AND t1.descLifeCycle <> '05-ZUMBI'
+
 ),
 
-tb_cohor  AS (
-    SELECT t1.DtRef,
-           t1.IdCliente,
-           t1.flFiel
+tb_cohort AS (
+
+    SELECT t1.dtRef,
+        t1.IdCliente,
+        t1.flFiel
 
     FROM tb_join AS t1
-    WHERE randomCol <= 2
-    ORDER BY IdCliente, DtRef
+    WHERE RandomCol <= 2
+    ORDER BY IdCliente, dtRef
+
 )
 
 SELECT t1.*,
        t2.idadeDias, 
        t2.qtdeAtivacaoVida,
-       t2.qtdeAtivacao7,
-       t2.qtdeAtivacao14,
-       t2.qtdeAtivacao28,
-       t2.qtdeAtivacao56,
+       t2.qtdeAtivacaoD7,
+       t2.qtdeAtivacaoD14,
+       t2.qtdeAtivacaoD28,
+       t2.qtdeAtivacaoD56,
        t2.qtdeTransacaoVida,
-       t2.qtdeTransacao7,
-       t2.qtdeTransacao14,
-       t2.qtdeTransacao28,
-       t2.qtdeTransacao56,
+       t2.qtdeTransacaoD7,
+       t2.qtdeTransacaoD14,
+       t2.qtdeTransacaoD28,
+       t2.qtdeTransacaoD56,
        t2.saldoVida,
-       t2.saldos7,
-       t2.saldos14,
-       t2.saldos28,
-       t2.saldos56,
+       t2.saldoD7,
+       t2.saldoD14,
+       t2.saldoD28,
+       t2.saldoD56,
        t2.qtdePontosPosVida,
-       t2.qtdePontosPos7,
-       t2.qtdePontosPos14,
-       t2.qtdePontosPos28,
-       t2.qtdePontosPos56,
-       t2.qtdePontosNegaVida,
-       t2.qtdePontosNega7,
-       t2.qtdePontosNega14,
-       t2.qtdePontosNega28,
-       t2.qtdePontosNega56,
-       t2.qtdetransacaoManha,
-       t2.qtdetransacaoTarde,
-       t2.qtdetransacaoNoite,
-       t2.pctdetransacaoManha,
-       t2.pctdetransacaoTarde,
-       t2.pctdetransacaoNoite,
-       t2.qtdeTransacaoDiaVida,
-       t2.qtdeTransacaoDiaDia7,
-       t2.qtdeTransacaoDiaDia14,
-       t2.qtdeTransacaoDiaDia28,
-       t2.qtdeTransacaoDiaDia56,
+       t2.qtdePontosPosD7,
+       t2.qtdePontosPosD14,
+       t2.qtdePontosPosD28,
+       t2.qtdePontosPosD56,
+       t2.qtdePontosNegVida,
+       t2.qtdePontosNegD7,
+       t2.qtdePontosNegD14,
+       t2.qtdePontosNegD28,
+       t2.qtdePontosNegD56,
+       t2.qtdeTransacaoManha,
+       t2.qtdeTransacaoTarde,
+       t2.qtdeTransacaoNoite,
+       t2.pctTransacaoManha,
+       t2.pctTransacaoTarde,
+       t2.pctTransacaoNoite,
+       t2.QtdeTransacaoDiaVida,
+       t2.QtdeTransacaoDiaD7,
+       t2.QtdeTransacaoDiaD14,
+       t2.QtdeTransacaoDiaD28,
+       t2.QtdeTransacaoDiaD56,
        t2.pctAtivacaoMAU,
        t2.qtdeHorasVida,
        t2.qtdeHorasD7,
@@ -74,17 +79,17 @@ SELECT t1.*,
        t2.qtdeHorasD28,
        t2.qtdeHorasD56,
        t2.avgIntervaloDiasVida,
-       t2.avgIntervaloD28,
-       t2.qtdeChatMessage,
-       t2.qtdeAirflowLover,
-       t2.qtdeResgatarPonei,
-       t2.qtdeRLover,
-       t2.qtdeListadePresenca,
-       t2.qtdePresençaStreak,
-       t2.qtdeTrocadePontosStreamElements,
-       t2.qtdeReembolsoStreamElements,
+       t2.avgIntervaloDiasD28,
+       t2.qteChatMessage,
+       t2.qteAirflowLover,
+       t2.qteRLover,
+       t2.qteResgatarPonei,
+       t2.qteListadepresenca,
+       t2.qtePresencaStreak,
+       t2.qteTrocaStreamElements,
+       t2.qteReembolsoStreamElements,
        t2.qtdeRPG,
-       t2.qtdeChurn_Model,
+       t2.qtdeChurnModel,
        t3.qtdeFrequencia,
        t3.descLifeCycleAtual,
        t3.descLifeCycleD28,
@@ -124,19 +129,19 @@ SELECT t1.*,
        t4.tseAnalytics2024,
        t4.qtdDiasUltiAtividade
 
-FROM tb_cohor AS t1
+FROM tb_cohort AS t1
 
 LEFT JOIN fs_transacional AS t2
 ON t1.IdCliente = t2.IdCliente
-AND t1.DtRef = t2.DtRef
+AND t1.dtRef = t2.dtRef
 
 LEFT JOIN fs_life_cycle AS t3
 ON t1.IdCliente = t3.IdCliente
-AND t1.DtRef = t3.DtRef
+AND t1.dtRef = t3.dtRef
 
 LEFT JOIN fs_education AS t4
 ON t1.IdCliente = t4.IdCliente
-AND t1.DtRef = t4.DtRef
+AND t1.dtRef = t4.dtRef
 
 WHERE t3.dtRef IS NOT NULL
 ;

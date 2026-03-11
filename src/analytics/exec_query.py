@@ -36,14 +36,14 @@ def execute_query(table, db_origin, db_target, dt_start, dt_stop, monthly, mode=
                 query_delete = f"DELETE FROM {table} WHERE dtRef = date('{i}', '-1 day')"
                 print(query_delete)
                 con.execute(sa.text(query_delete))
-                con.commit
+                con.commit()
             except Exception as e:
                 print(e)
         
         print(i)
         query_format = query.format(date=i)
         df = pd.read_sql(query_format, engine_app)
-        df.to_sql(table, engine_analitycal, index=False, if_exists="append")
+        df.to_sql(table, engine_analitycal, index=False, if_exists=mode or "append")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -58,7 +58,16 @@ def main():
     parser.add_argument("--mode", choices=['append', 'replace'])
     args = parser.parse_args()
 
-    
+    execute_query(
+        table=args.table,
+        db_origin=args.db_origin,
+        db_target=args.db_target,
+        dt_start=args.start,
+        dt_stop=args.stop,
+        monthly=args.monthly,
+        mode=args.mode
+    )
+
 if __name__ == "__main__":
     main()
 

@@ -1,27 +1,33 @@
 WITH tb_life_cycle_atual AS (
-    SELECT IdCliente, life_cicle
-    FROM life_cycle
 
-    WHERE DtRef = date('{date}', '-1 day')
+    SELECT IdCliente,
+           qtdeFrequencia,
+           descLifeCycle AS descLifeCycleAtual
+
+    FROM life_cycle
+    WHERE dtRef = date('{date}','-1 day')
+
 ),
 
 tb_life_cycle_D28 AS (
+
     SELECT IdCliente,
-            life_cicle
+        descLifeCycle AS descLifeCycleD28
+
     FROM life_cycle
-    WHERE dtRef = date('{date}', '-29 day')
+    WHERE dtRef = date('{date}','-29 day')
 ),
 
 tb_share_ciclos AS (
 
     SELECT idCliente,
-            1. * SUM(CASE WHEN descLifeCycle = '01 CURIOSO' THEN 1 ELSE 0 END) / COUNT(*) AS pctCurioso,
-            1. * SUM(CASE WHEN descLifeCycle = '02 LEAL' THEN 1 ELSE 0 END) / COUNT(*) AS pctFiel,
-            1. * SUM(CASE WHEN descLifeCycle = '03 TURISTA' THEN 1 ELSE 0 END) / COUNT(*) AS pctTurista,
-            1. * SUM(CASE WHEN descLifeCycle = '04 DESENCATANDO' THEN 1 ELSE 0 END) / COUNT(*) AS pctDesencantada,
-            1. * SUM(CASE WHEN descLifeCycle = '05 ZUMBI' THEN 1 ELSE 0 END) / COUNT(*) AS pctZumbi,
-            1. * SUM(CASE WHEN descLifeCycle = '06 REATIVADO' THEN 1 ELSE 0 END) / COUNT(*) AS pctReconquistado,
-            1. * SUM(CASE WHEN descLifeCycle = '07 REBORN' THEN 1 ELSE 0 END) / COUNT(*) AS pctReborn
+            1. * SUM(CASE WHEN descLifeCycle = '01-CURIOSO' THEN 1 ELSE 0 END) / COUNT(*) AS pctCurioso,
+            1. * SUM(CASE WHEN descLifeCycle = '02-FIEL' THEN 1 ELSE 0 END) / COUNT(*) AS pctFiel,
+            1. * SUM(CASE WHEN descLifeCycle = '03-TURISTA' THEN 1 ELSE 0 END) / COUNT(*) AS pctTurista,
+            1. * SUM(CASE WHEN descLifeCycle = '04-DESENCANTADA' THEN 1 ELSE 0 END) / COUNT(*) AS pctDesencantada,
+            1. * SUM(CASE WHEN descLifeCycle = '05-ZUMBI' THEN 1 ELSE 0 END) / COUNT(*) AS pctZumbi,
+            1. * SUM(CASE WHEN descLifeCycle = '02-RECONQUISTADO' THEN 1 ELSE 0 END) / COUNT(*) AS pctReconquistado,
+            1. * SUM(CASE WHEN descLifeCycle = '02-REBORN' THEN 1 ELSE 0 END) / COUNT(*) AS pctReborn
 
     FROM life_cycle
     WHERE dtRef < '{date}'
