@@ -96,3 +96,12 @@ imput_1000 = imputation.ArbitraryNumberImputer(
 # MODIFY - ONEHOT enconding
 
 onehot = encoding.OneHotEncoder(variables=cat_features)
+
+#%%
+# Aplicando modificação no dataset
+
+X_train_transform = drop_features.fit_transform(X_train)
+X_train_transform = imput_0.fit_transform(X_train_transform)
+X_train_transform = imput_new.fit_transform(X_train_transform)
+X_train_transform = imput_1000.fit_transform(X_train_transform)
+X_train_transform = onehot.fit_transform(X_train_transform)
