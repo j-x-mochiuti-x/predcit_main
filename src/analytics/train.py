@@ -93,6 +93,6 @@ imput_1000 = imputation.ArbitraryNumberImputer(
     )
 
 #%%
-# MODIFY - ONEHOT
+# MODIFY - ONEHOT enconding
 
 onehot = encoding.OneHotEncoder(variables=cat_features)
