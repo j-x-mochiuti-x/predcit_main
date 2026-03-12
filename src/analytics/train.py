@@ -91,3 +91,8 @@ imput_1000 = imputation.ArbitraryNumberImputer(
             'avgIntervaloDiasD28',
             'qtdDiasUltiAtividade'],
     )
+
+#%%
+# MODIFY - ONEHOT
+
+onehot = encoding.OneHotEncoder(variables=cat_features)
