@@ -40,3 +40,28 @@ print(f"BASE TREINO: {y_train.shape[0]} Unidades  /\ Tx. target {100*y_train.mea
 print(f"BASE TREINO: {y_test.shape[0]} Unidades  /\ Tx. target {100*y_test.mean():.2f}%")
 
 #%%
+
+#EXPLORE (Exploração) -  faltantes
+s_nas = X_train.isna().mean()
+s_nas = s_nas[s_nas>0]
+s_nas
+
+#EXPLORE (Exploração) -  BIVARIADA
+cat_features = ['descLifeCycleAtual', 'descLifeCycleD28']
+num_features = list(set(features) - set(cat_features))
+
+df_train = X_train.copy()
+df_train[target] = y_train.copy()
+
+df_train[num_features] = df_train[num_features].astype(float)
+
+bivariada = df_train.groupby(target)[num_features].median()
+bivariada['ratio'] = (bivariada[1]+0.001) / (bivariada[0]+0.001)
+bivariada = bivariada.sort_values(by='ratio', ascending=False)
+bivariada
+
+# %%
+df_train.groupby('descLifeCycleAtual')[target].mean()
+
+# %%
+df_train.groupby('descLifeCycleD28')[target].mean()
