@@ -15,3 +15,6 @@ df = pd.read_sql("SELECT * FROM abt_fiel", con)
 df.head()
 
 #%%
+# SAMPLE (Amostragem) - OOT 
+df_oot = df[df['dtRef']==df['dtRef'].max()].reset_index(drop=True)
+df_oot
