@@ -65,3 +65,11 @@ df_train.groupby('descLifeCycleAtual')[target].mean()
 
 # %%
 df_train.groupby('descLifeCycleD28')[target].mean()
+
+# %%
+# MODIFY (Modificação) - Remoção
+
+X_train[num_features] = X_train[num_features].astype(float)
+
+to_remove = bivariada[bivariada['ratio']==1].index.tolist()
+drop_features = selection.DropFeatures(to_remove)
