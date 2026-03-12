@@ -73,3 +73,21 @@ X_train[num_features] = X_train[num_features].astype(float)
 
 to_remove = bivariada[bivariada['ratio']==1].index.tolist()
 drop_features = selection.DropFeatures(to_remove)
+
+#%%
+# MODIFY - Faltantes
+
+fill_0 = ['github2025', 'python2025']
+imput_0 = imputation.ArbitraryNumberImputer(arbitrary_number=0,
+                                            variables=fill_0)
+
+imput_new = imputation.CategoricalImputer(
+    fill_value='Nao-Usuario',
+    variables=['descLifeCycleD28'])
+
+imput_1000 = imputation.ArbitraryNumberImputer(
+    arbitrary_number=1000,
+    variables=['avgIntervaloDiasVida',
+            'avgIntervaloDiasD28',
+            'qtdDiasUltiAtividade'],
+    )
