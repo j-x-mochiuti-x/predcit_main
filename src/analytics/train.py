@@ -1,11 +1,10 @@
-# %%
 import pandas as pd
-import sqlalchemy as sa
+import sqlalchemy
+from sklearn import model_selection
+from feature_engine import selection
+from feature_engine import encoding
+from feature_engine import imputation
 
-con = sa.create_engine("sqlite:///../../data/analytics/database.db")
-# %%
-#importaçã dos dados
-
-df = pd.read_sql("abt_fiel", con)
-df.head()
-# %%
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
+con = sqlalchemy.create_engine("sqlite:///../../data/analytics/database.db")
