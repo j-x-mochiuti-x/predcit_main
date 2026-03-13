@@ -108,8 +108,10 @@ X_train_transform = onehot.fit_transform(X_train_transform)
 
 #%% MODEL (Modelagem)
 from sklearn import tree
+from sklearn import ensemble
 
-model = tree.DecisionTreeClassifier(random_state=42, max_leaf_nodes=50)
+#model = tree.DecisionTreeClassifier(random_state=42, min_samples_leaf=50)
+model = ensemble.RandomForestClassifier(random_state=42, n_estimators=150, min_samples_leaf=50, n_jobs=-1)
 model.fit(X_train_transform, y_train)
 
 #%%
@@ -140,6 +142,24 @@ acc_test = metrics.accuracy_score(y_test, y_pred_test)
 auc_test = metrics.roc_auc_score(y_test, y_proba_test[:,1])
 print(f"Acurácia teste: {acc_test}")
 print(f"AUC teste: {auc_test}")
+
+# %%
+X_oot = df_oot[features]
+y_oot = df_oot[target]
+
+X_oot_transform = drop_features.transform(X_oot)
+X_oot_transform = imput_0.transform(X_oot_transform)
+X_oot_transform = imput_new.transform(X_oot_transform)
+X_oot_transform = imput_1000.transform(X_oot_transform)
+X_oot_transform = onehot.transform(X_oot_transform)
+
+y_pred_oot = model.predict(X_oot_transform)
+y_proba_oot = model.predict_proba(X_oot_transform)
+
+acc_oot = metrics.accuracy_score(y_oot, y_pred_oot)
+auc_oot = metrics.roc_auc_score(y_oot, y_proba_oot[:,1])
+print(f"Acurácia oot: {acc_oot}")
+print(f"AUC oot: {auc_oot}")
 
 # %%
 y_predict_fodase = pd.Series([0]*y_test.shape[0])
