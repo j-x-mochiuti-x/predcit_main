@@ -118,10 +118,13 @@ model.fit(X_train_transform, y_train)
 from sklearn import metrics
 
 y_pred_train = model.predict(X_train_transform)
+y_proba_train = model.predict_proba(X_train_transform)
+
 acc_train = metrics.accuracy_score(y_train, y_pred_train)
+auc_train = metrics.roc_auc_score(y_train, y_proba_train[:,1])
 
 print(f"Acurácia treino: {acc_train}")
-
+print(f"AUC treino: {auc_train}")
 #%%
 
 X_test_transform = drop_features.transform(X_test)
@@ -131,5 +134,18 @@ X_test_transform = imput_1000.transform(X_test_transform)
 X_test_transform = onehot.transform(X_test_transform)
 
 y_pred_test = model.predict(X_test_transform)
+y_proba_test = model.predict_proba(X_test_transform)
+
 acc_test = metrics.accuracy_score(y_test, y_pred_test)
+auc_test = metrics.roc_auc_score(y_test, y_proba_test[:,1])
 print(f"Acurácia teste: {acc_test}")
+print(f"AUC teste: {auc_test}")
+
+# %%
+y_predict_fodase = pd.Series([0]*y_test.shape[0])
+y_proba_fodase = pd.Series([y_train.mean()]*y_test.shape[0])
+
+acc_fodase = metrics.accuracy_score(y_test, y_predict_fodase)
+auc_fodase = metrics.roc_auc_score(y_test, y_proba_fodase)
+print("Acurácia Fodase:", acc_fodase)
+print("AUC Fodase:", auc_fodase)
