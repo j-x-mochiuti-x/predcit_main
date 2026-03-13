@@ -105,3 +105,31 @@ X_train_transform = imput_0.fit_transform(X_train_transform)
 X_train_transform = imput_new.fit_transform(X_train_transform)
 X_train_transform = imput_1000.fit_transform(X_train_transform)
 X_train_transform = onehot.fit_transform(X_train_transform)
+
+#%% MODEL (Modelagem)
+from sklearn import tree
+
+model = tree.DecisionTreeClassifier(random_state=42, max_leaf_nodes=50)
+model.fit(X_train_transform, y_train)
+
+#%%
+
+#ASSESS (verificação)
+from sklearn import metrics
+
+y_pred_train = model.predict(X_train_transform)
+acc_train = metrics.accuracy_score(y_train, y_pred_train)
+
+print(f"Acurácia treino: {acc_train}")
+
+#%%
+
+X_test_transform = drop_features.transform(X_test)
+X_test_transform = imput_0.transform(X_test_transform)
+X_test_transform = imput_new.transform(X_test_transform)
+X_test_transform = imput_1000.transform(X_test_transform)
+X_test_transform = onehot.transform(X_test_transform)
+
+y_pred_test = model.predict(X_test_transform)
+acc_test = metrics.accuracy_score(y_test, y_pred_test)
+print(f"Acurácia teste: {acc_test}")
