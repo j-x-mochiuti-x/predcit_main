@@ -125,8 +125,8 @@ model_pipeline = pipeline.Pipeline(steps=[
 #ASSESS (verificação)
 from sklearn import metrics
 
-y_pred_train = model.predict(X_train_transform)
-y_proba_train = model.predict_proba(X_train_transform)
+y_pred_train = model_pipeline.predict(X_train)
+y_proba_train = model_pipeline.predict_proba(X_train)
 
 acc_train = metrics.accuracy_score(y_train, y_pred_train)
 auc_train = metrics.roc_auc_score(y_train, y_proba_train[:,1])
@@ -135,14 +135,8 @@ print(f"Acurácia treino: {acc_train}")
 print(f"AUC treino: {auc_train}")
 #%%
 
-X_test_transform = drop_features.transform(X_test)
-X_test_transform = imput_0.transform(X_test_transform)
-X_test_transform = imput_new.transform(X_test_transform)
-X_test_transform = imput_1000.transform(X_test_transform)
-X_test_transform = onehot.transform(X_test_transform)
-
-y_pred_test = model.predict(X_test_transform)
-y_proba_test = model.predict_proba(X_test_transform)
+y_pred_test = model_pipeline.predict(X_test)
+y_proba_test = model_pipeline.predict_proba(X_test)
 
 acc_test = metrics.accuracy_score(y_test, y_pred_test)
 auc_test = metrics.roc_auc_score(y_test, y_proba_test[:,1])
@@ -153,14 +147,8 @@ print(f"AUC teste: {auc_test}")
 X_oot = df_oot[features]
 y_oot = df_oot[target]
 
-X_oot_transform = drop_features.transform(X_oot)
-X_oot_transform = imput_0.transform(X_oot_transform)
-X_oot_transform = imput_new.transform(X_oot_transform)
-X_oot_transform = imput_1000.transform(X_oot_transform)
-X_oot_transform = onehot.transform(X_oot_transform)
-
-y_pred_oot = model.predict(X_oot_transform)
-y_proba_oot = model.predict_proba(X_oot_transform)
+y_pred_oot = model_pipeline.predict(X_oot)
+y_proba_oot = model_pipeline.predict_proba(X_oot)
 
 acc_oot = metrics.accuracy_score(y_oot, y_pred_oot)
 auc_oot = metrics.roc_auc_score(y_oot, y_proba_oot[:,1])
@@ -175,3 +163,25 @@ acc_fodase = metrics.accuracy_score(y_test, y_predict_fodase)
 auc_fodase = metrics.roc_auc_score(y_test, y_proba_fodase)
 print("Acurácia Fodase:", acc_fodase)
 print("AUC Fodase:", auc_fodase)
+
+#%%
+
+features_names = (model_pipeline[:1].transform(X_train.head(1))
+                    .columns
+                    .tolist())
+
+features_importance = pd.Series(model_pipeline[-1].feature_importances_, index=features_names)
+features_importance.sort_values(ascending=False).head(20)
+#%%
+
+#ASSESS (Salvar modelo)
+
+model_series = pd.Series({
+    "model": model_pipeline,
+    "features": X_train.columns.tolist(),
+    "auc_train": auc_train,
+    "auc_test": auc_test,
+    "auc_oot": auc_oot,
+})
+
+model_series.to_pickle('model_fiel.pkl')
