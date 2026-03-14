@@ -97,22 +97,28 @@ imput_1000 = imputation.ArbitraryNumberImputer(
 
 onehot = encoding.OneHotEncoder(variables=cat_features)
 
-#%%
-# Aplicando modificação no dataset
-
-X_train_transform = drop_features.fit_transform(X_train)
-X_train_transform = imput_0.fit_transform(X_train_transform)
-X_train_transform = imput_new.fit_transform(X_train_transform)
-X_train_transform = imput_1000.fit_transform(X_train_transform)
-X_train_transform = onehot.fit_transform(X_train_transform)
 
 #%% MODEL (Modelagem)
 from sklearn import tree
 from sklearn import ensemble
 
 #model = tree.DecisionTreeClassifier(random_state=42, min_samples_leaf=50)
-model = ensemble.RandomForestClassifier(random_state=42, n_estimators=150, min_samples_leaf=50, n_jobs=-1)
-model.fit(X_train_transform, y_train)
+model = ensemble.AdaBoostClassifier(random_state=42, n_estimators=150, min_samples_leaf=50, n_jobs=-1)
+
+# %%
+
+# Pipeline (criação do pipeline)
+from sklearn import pipeline
+
+model_pipeline = pipeline.Pipeline(steps=[
+    ('Remoção de Fatures', drop_features),
+    ('Imputação de zeros', imput_0),
+    ('Imputação de Não-usuário', imput_new),
+    ('Imputação de 1000', imput_1000),
+    ('Onehot Encoding', onehot),
+    ('Algoritmo', model)
+])
+
 
 #%%
 
