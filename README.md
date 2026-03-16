@@ -1,9 +1,9 @@
-# 🚀 Análise de Engajamento e Churn: Projeto de Aprendizado
+# 🚀 Caminho da Ciência de Dados em prática: Projeto de Aprendizado
 
-Este repositório contém o desenvolvimento de um projeto prático realizado durante meus estudos sobre análise de dados e Machine Learning. O objetivo principal é entender o comportamento dos usuários da comunidade **TMW** e prever variações no engajamento.
+Este repositório contém o desenvolvimento de um projeto prático realizado durante meus estudos sobre ciência de dados e Machine Learning. O objetivo principal é entender como é um projeto e todo o processo de um cientista de dados em seu dia-a-dia, do zero até o deploy.
 
 ## 📌 Objetivo do Projeto
-Identificar se os usuários da comunidade estão ganhando ou perdendo engajamento, permitindo ações proativas (como sistemas de pontuação/incentivos) para manter a base ativa.
+Identificar se os usuários da comunidade estão ganhando ou perdendo engajamento, permitindo ações proativas (como sistemas de pontuação/incentivos) para manter a base ativa utilizando a base de dados disponibilizados pelo instrutor do curso.
 
 ---
 
@@ -34,7 +34,7 @@ No decorrer do curso, estou utilizando o seguinte ecossistema técnico:
 ## 🏗️ Etapas de Desenvolvimento
 O projeto segue uma metodologia estruturada para garantir resultados alinhados ao negócio:
 
-1.  **Entendimento do Negócio:** Mapear o que significa "engajamento" para a TMW.
+1.  **Entendimento do Negócio:** Mapear o que significa "engajamento".
 2.  **Extração dos Dados:** Consultas SQL para buscar o histórico de interações.
 3.  **Análise Exploratória (EDA):** Entender padrões e anomalias nos dados.
 4.  **Engenharia de Variáveis:** Definição das variáveis que melhor explicam o comportamento do usuário.
